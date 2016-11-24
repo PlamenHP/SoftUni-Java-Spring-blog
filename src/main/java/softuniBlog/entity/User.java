@@ -1,6 +1,8 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -10,14 +12,26 @@ public class User {
     private String email;
     private String fullName;
     private String password;
+    private Set<Role> roles;
 
     public User(String email, String fullName, String password) {
         this.email = email;
         this.fullName = fullName;
         this.password = password;
+        this.roles = new HashSet<>();
     }
 
     public User() {
+    }
+
+    @ManyToMany (fetch = FetchType.EAGER)
+    @JoinTable(name ="user_roles")
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Id
