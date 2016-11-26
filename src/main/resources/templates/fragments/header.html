@@ -10,8 +10,15 @@
                     <span class="icon-bar"></span>
                 </button>
             </div>
+
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
+                    <li sec:authorize="isAuthenticated()">
+                        <a th:href="@{/article/create}">
+                            Create Article
+                        </a>
+                    </li>
+
                     <li sec:authorize="isAuthenticated()">
                         <a th:href="@{/profile}">
                             My Profile
