@@ -2,6 +2,7 @@ package softuniBlog.config;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import softuniBlog.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,11 @@ public class BlogUserDetails extends User implements UserDetails{
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String userRoles = StringUtils.collectionToCommaDelimitedString(this.roles);
         return AuthorityUtils.commaSeparatedStringToAuthorityList(userRoles);
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getEmail();
     }
 
     public User getUser() {

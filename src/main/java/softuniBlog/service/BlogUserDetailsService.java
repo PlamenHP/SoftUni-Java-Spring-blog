@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import softuniBlog.entity.User;
 import softuniBlog.repository.UserRepository;
-import java.util.
 import java.util.Set;
 import java.util.stream.Collectors;
 
