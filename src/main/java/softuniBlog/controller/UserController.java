@@ -2,8 +2,10 @@ package softuniBlog.controller;
 
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -37,7 +39,7 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerProcess(UserBindingModel userBindingModel) {
-        if(!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())){
+        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
             return "redirect:/register";
         }
 
@@ -67,10 +69,25 @@ public class UserController {
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if(auth != null) {
+        if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
         return "redirect:/login?logout";
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
+    public String profilePage(Model model) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        User user = this.userRepository.findByEmail(principal.getUsername());
+
+        model.addAttribute("user", user);
+        model.addAttribute("view", "user/profile");
+
+        return "base-layout";
     }
 }
