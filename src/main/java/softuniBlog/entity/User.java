@@ -13,15 +13,26 @@ public class User {
     private String fullName;
     private String password;
     private Set<Role> roles;
+    private Set<Article> articles;
 
     public User(String email, String fullName, String password) {
         this.email = email;
         this.fullName = fullName;
         this.password = password;
         this.roles = new HashSet<>();
+        this.articles = new HashSet<>();
     }
 
     public User() {
+    }
+
+    @OneToMany(mappedBy = "author")
+    public Set<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(Set<Article> articles) {
+        this.articles = articles;
     }
 
     @ManyToMany (fetch = FetchType.EAGER)
