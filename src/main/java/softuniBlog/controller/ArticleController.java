@@ -59,4 +59,33 @@ public class ArticleController {
 
         return "base-layout";
     }
+
+    @GetMapping("/article/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String edit(@PathVariable Integer id, Model model){
+        if(!this.articleRepository.exists(id)){
+            return "redirect:/";
+        }
+        Article article = this.articleRepository.findOne(id);
+
+        model.addAttribute("article", article);
+        model.addAttribute("view", "article/edit");
+
+        return "base-layout";
+    }
+
+    @PostMapping("/article/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editProcess(@PathVariable Integer id,ArticleBindingModel articleBindingModel){
+        if(!this.articleRepository.exists(id)){
+            return "redirect:/";
+        }
+        Article article = this.articleRepository.findOne(id);
+
+        article.setContent(articleBindingModel.getContent());
+        article.setTitle(articleBindingModel.getTitle());
+
+        this.articleRepository.saveAndFlush(article);
+        return "redirect:/article/" + article.getId();
+    }
 }
