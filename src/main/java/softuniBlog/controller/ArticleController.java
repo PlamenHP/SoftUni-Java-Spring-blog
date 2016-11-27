@@ -2,6 +2,7 @@ package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -52,6 +53,7 @@ public class ArticleController {
         if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
+
         Article article = this.articleRepository.findOne(id);
 
         model.addAttribute("article", article);
@@ -66,10 +68,19 @@ public class ArticleController {
         if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
-        Article article = this.articleRepository.findOne(id);
-        if(!isUserAuthorOrAdmin(article)){
-            return "redirect:/article/" + id;
+
+        if(!(SecurityContextHolder.getContext().getAuthentication()
+                instanceof AnonymousAuthenticationToken)){
+            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+
+            User entityUser = this.userRepository.findByEmail(principal.getUsername());
+
+            model.addAttribute("user", entityUser);
         }
+
+        Article article = this.articleRepository.findOne(id);
+
         model.addAttribute("article", article);
         model.addAttribute("view", "article/edit");
 
