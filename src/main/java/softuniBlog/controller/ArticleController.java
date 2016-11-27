@@ -67,7 +67,9 @@ public class ArticleController {
             return "redirect:/";
         }
         Article article = this.articleRepository.findOne(id);
-
+        if(!isUserAuthorOrAdmin(article)){
+            return "redirect:/article/" + id;
+        }
         model.addAttribute("article", article);
         model.addAttribute("view", "article/edit");
 
@@ -81,7 +83,9 @@ public class ArticleController {
             return "redirect:/";
         }
         Article article = this.articleRepository.findOne(id);
-
+        if(!isUserAuthorOrAdmin(article)){
+            return "redirect:/article/" + id;
+        }
         article.setContent(articleBindingModel.getContent());
         article.setTitle(articleBindingModel.getTitle());
 
@@ -96,14 +100,16 @@ public class ArticleController {
             return "redirect:/";
         }
         Article article = this.articleRepository.findOne(id);
-
+        if(!isUserAuthorOrAdmin(article)){
+            return "redirect:/article/" + id;
+        }
         model.addAttribute("article", article);
         model.addAttribute("view", "article/delete");
 
         return "base-layout";
     }
 
-    @PostMapping("/article/dekete/{id}")
+    @PostMapping("/article/delete/{id}")
     @PreAuthorize("isAuthenticated()")
     public String deleteProcess(@PathVariable Integer id, ArticleBindingModel articleBindingModel) {
         if (!this.articleRepository.exists(id)) {
@@ -111,7 +117,19 @@ public class ArticleController {
         }
         Article article = this.articleRepository.findOne(id);
 
+        if(!isUserAuthorOrAdmin(article)){
+            return "redirect:/article/" + id;
+        }
+
         this.articleRepository.delete(article);
         return "redirect:/";
+    }
+
+    private boolean isUserAuthorOrAdmin(Article article){
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        User userEntity = this.userRepository.findByEmail(user.getUsername());
+
+        return userEntity.isAdmin() || userEntity.isAuthor(article);
     }
 }

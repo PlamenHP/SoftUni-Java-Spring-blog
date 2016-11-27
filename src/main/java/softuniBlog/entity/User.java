@@ -2,6 +2,7 @@ package softuniBlog.entity;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -35,8 +36,8 @@ public class User {
         this.articles = articles;
     }
 
-    @ManyToMany (fetch = FetchType.EAGER)
-    @JoinTable(name ="user_roles")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles")
     public Set<Role> getRoles() {
         return roles;
     }
@@ -64,7 +65,7 @@ public class User {
         this.email = email;
     }
 
-    @Column(name  = "fullName", nullable = false)
+    @Column(name = "fullName", nullable = false)
     public String getFullName() {
         return fullName;
     }
@@ -73,7 +74,7 @@ public class User {
         this.fullName = fullName;
     }
 
-    @Column(name  = "password", length = 60, nullable = false)
+    @Column(name = "password", length = 60, nullable = false)
     public String getPassword() {
         return password;
     }
@@ -84,5 +85,17 @@ public class User {
 
     public void addRole(Role role) {
         this.roles.add(role);
+    }
+
+    @Transient
+    public boolean isAdmin() {
+        return this.getRoles()
+                .stream()
+                .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+    }
+
+    @Transient
+    public boolean isAuthor(Article article) {
+        return Objects.equals(this.getId(), article.getAuthor().getId());
     }
 }

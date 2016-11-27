@@ -1,4 +1,6 @@
 package softuniBlog.entity;
+import org.thymeleaf.util.StringUtils;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,5 +42,10 @@ public class Role {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    @Transient
+    public String getSimpleName() {
+        return StringUtils.capitalize(this.getName().substring(5).toLowerCase());
     }
 }
