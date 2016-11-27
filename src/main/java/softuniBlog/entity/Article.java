@@ -16,6 +16,9 @@ public class Article {
         this.author = author;
     }
 
+    public Article() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {
@@ -52,5 +55,10 @@ public class Article {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    @Transient
+    public String getSummary(){
+        return this.getContent().substring(0,this.getContent().length()/2)+ "...";
     }
 }
