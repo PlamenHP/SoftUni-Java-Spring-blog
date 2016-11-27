@@ -24,14 +24,14 @@ public class ArticleController {
 
     @GetMapping("/article/create")
     @PreAuthorize("isAuthenticated()")
-    public String create(Model model){
+    public String create(Model model) {
         model.addAttribute("view", "article/create");
         return "base-layout";
     }
 
     @PostMapping("/article/create")
     @PreAuthorize("isAuthenticated()")
-    public String createProcess(ArticleBindingModel articleBindingModel){
+    public String createProcess(ArticleBindingModel articleBindingModel) {
         UserDetails user = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
@@ -48,8 +48,8 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{id}")
-    public String details(Model model, @PathVariable Integer id){
-        if(!this.articleRepository.exists(id)){
+    public String details(Model model, @PathVariable Integer id) {
+        if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
         Article article = this.articleRepository.findOne(id);
@@ -62,8 +62,8 @@ public class ArticleController {
 
     @GetMapping("/article/edit/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String edit(@PathVariable Integer id, Model model){
-        if(!this.articleRepository.exists(id)){
+    public String edit(@PathVariable Integer id, Model model) {
+        if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
         Article article = this.articleRepository.findOne(id);
@@ -76,8 +76,8 @@ public class ArticleController {
 
     @PostMapping("/article/edit/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String editProcess(@PathVariable Integer id,ArticleBindingModel articleBindingModel){
-        if(!this.articleRepository.exists(id)){
+    public String editProcess(@PathVariable Integer id, ArticleBindingModel articleBindingModel) {
+        if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
         Article article = this.articleRepository.findOne(id);
@@ -87,5 +87,31 @@ public class ArticleController {
 
         this.articleRepository.saveAndFlush(article);
         return "redirect:/article/" + article.getId();
+    }
+
+    @GetMapping("/article/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(@PathVariable Integer id, Model model) {
+        if (!this.articleRepository.exists(id)) {
+            return "redirect:/";
+        }
+        Article article = this.articleRepository.findOne(id);
+
+        model.addAttribute("article", article);
+        model.addAttribute("view", "article/delete");
+
+        return "base-layout";
+    }
+
+    @PostMapping("/article/dekete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteProcess(@PathVariable Integer id, ArticleBindingModel articleBindingModel) {
+        if (!this.articleRepository.exists(id)) {
+            return "redirect:/";
+        }
+        Article article = this.articleRepository.findOne(id);
+
+        this.articleRepository.delete(article);
+        return "redirect:/";
     }
 }
