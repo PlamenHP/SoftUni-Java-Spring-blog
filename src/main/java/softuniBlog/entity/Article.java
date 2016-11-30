@@ -9,6 +9,7 @@ public class Article {
     private String title;
     private String content;
     private User author;
+    private Category category;
 
     public Article(String title, String content, User author) {
         this.title = title;
@@ -60,5 +61,15 @@ public class Article {
     @Transient
     public String getSummary(){
         return this.getContent().substring(0,this.getContent().length()/2)+ "...";
+    }
+
+    @ManyToOne()
+    @joinColumn(nullable = false, name = "categoryId")
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
