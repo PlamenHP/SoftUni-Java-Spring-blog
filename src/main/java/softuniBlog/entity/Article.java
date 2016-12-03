@@ -64,7 +64,7 @@ public class Article {
     }
 
     @ManyToOne()
-    @joinColumn(nullable = false, name = "categoryId")
+    @JoinColumn(nullable = false, name = "categoryId")
     public Category getCategory() {
         return category;
     }

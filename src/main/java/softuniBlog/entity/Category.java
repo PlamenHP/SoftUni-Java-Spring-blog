@@ -6,7 +6,7 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "categoryes")
+@Table(name = "categories")
 public class Category{
     private Integer id;
 
@@ -17,6 +17,9 @@ public class Category{
     public Category(String name) {
         this.name = name;
         this.articles = new HashSet<>();
+    }
+
+    public Category() {
     }
 
     @Id
