@@ -22,6 +22,7 @@ import softuniBlog.repository.UserRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.config.http.MatcherType.regex;
 
@@ -104,10 +105,16 @@ public class ArticleController {
         if(!isUserAuthorOrAdmin(article)){
             return "redirect:/article/" + id;
         }
+
+        String tagString = article.getTags().stream()
+                .map(Tag::getName)
+                .collect(Collectors.joining(", "));
+
         List<Category> categories = this.categoryRepository.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("article", article);
         model.addAttribute("view", "article/edit");
+        model.addAttribute("tags", tagString);
 
         return "base-layout";
     }
@@ -123,7 +130,9 @@ public class ArticleController {
             return "redirect:/article/" + id;
         }
         Category category = this.categoryRepository.findOne(articleBindingModel.getCategoryId());
+        HashSet<Tag> tags = this.findTagsFromString(articleBindingModel.getTagString());
 
+        article.setTags(tags);
         article.setCategory(category);
         article.setContent(articleBindingModel.getContent());
         article.setTitle(articleBindingModel.getTitle());
