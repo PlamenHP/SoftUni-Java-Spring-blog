@@ -1,6 +1,6 @@
 <main>
     <div class="container body-content span=8 offset=2">
-        <div class="well">
+        <div class="well">a
             <form class="form-horizontal" th:action="@{/article/create}" method="POST">
                 <fieldset>
                     <legend>New Post</legend>
@@ -17,6 +17,14 @@
                         <label class="col-sm-4 control-label" for="article_content">Content</label>
                         <div class="col-sm-6">
                             <textarea class="form-control" rows="6" id="article_content" name="content"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="article_category">Category</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="article_category" name="categoryId">
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
                         </div>
                     </div>
 

@@ -12,9 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.entity.Article;
+import softuniBlog.entity.Category;
 import softuniBlog.entity.User;
 import softuniBlog.repository.ArticleRepository;
+import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.UserRepository;
+
+import java.util.List;
 
 @Controller
 public class ArticleController {
@@ -22,11 +26,17 @@ public class ArticleController {
     private ArticleRepository articleRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping("/article/create")
     @PreAuthorize("isAuthenticated()")
     public String create(Model model) {
         model.addAttribute("view", "article/create");
+
+        List<Category> categories = this.categoryRepository.findAll();
+        model.addAttribute("categories", categories);
+
         return "base-layout";
     }
 
@@ -37,11 +47,13 @@ public class ArticleController {
                 .getAuthentication()
                 .getPrincipal();
         User userEntity = this.userRepository.findByEmail(user.getUsername());
+        Category category = this.categoryRepository.findOne(articleBindingModel.getCategoryId());
 
         Article articleEntity = new Article(
                 articleBindingModel.getTitle(),
                 articleBindingModel.getContent(),
-                userEntity
+                userEntity,
+                category
         );
 
         this.articleRepository.saveAndFlush(articleEntity);
