@@ -94,6 +94,8 @@ public class ArticleController {
         if(!isUserAuthorOrAdmin(article)){
             return "redirect:/article/" + id;
         }
+        List<Category> categories = this.categoryRepository.findAll();
+        model.addAttribute("categories", categories);
         model.addAttribute("article", article);
         model.addAttribute("view", "article/edit");
 
@@ -110,10 +112,14 @@ public class ArticleController {
         if(!isUserAuthorOrAdmin(article)){
             return "redirect:/article/" + id;
         }
+        Category category = this.categoryRepository.findOne(articleBindingModel.getCategoryId());
+
+        article.setCategory(category);
         article.setContent(articleBindingModel.getContent());
         article.setTitle(articleBindingModel.getTitle());
 
         this.articleRepository.saveAndFlush(article);
+
         return "redirect:/article/" + article.getId();
     }
 
