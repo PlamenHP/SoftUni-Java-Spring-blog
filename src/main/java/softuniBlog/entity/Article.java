@@ -1,6 +1,7 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "articles")
@@ -10,6 +11,7 @@ public class Article {
     private String content;
     private User author;
     private Category category;
+    private Set<Tag> tags;
 
     public Article(String title, String content, User author, Category category) {
         this.title = title;
@@ -72,5 +74,15 @@ public class Article {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @ManyToMany()
+    @JoinColumn(table = "articles_tags")
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
