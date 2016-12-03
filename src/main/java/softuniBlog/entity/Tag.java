@@ -17,6 +17,9 @@ public class Tag {
         this.articles = new HashSet<>();
     }
 
+    public Tag() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {
