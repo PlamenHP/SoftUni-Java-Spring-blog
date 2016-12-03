@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import softuniBlog.bindingModel.CategoryBindingModel;
@@ -55,6 +56,32 @@ public class CategoryController {
         }
 
         Category category = new Category(categoryBindingModel.getName());
+        this.categoryRepository.saveAndFlush(category);
+
+        return "redirect:/admin/categories/";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(Model model, @PathVariable Integer id){
+        if(!this.categoryRepository.exists(id)){
+            return "redirect:/admin/categories";
+        }
+        model.addAttribute("view", "admin/category/edit");
+
+        Category category = this.categoryRepository.findOne(id);
+        model.addAttribute("category",category);
+
+        return "base-layout";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editProcess(@PathVariable Integer id, CategoryBindingModel categoryBindingModel){
+        if(!this.categoryRepository.exists(id)){
+            return "redirect:/admin/categories";
+        }
+
+        Category category = this.categoryRepository.findOne(id);
+        category.setName(categoryBindingModel.getName());
         this.categoryRepository.saveAndFlush(category);
 
         return "redirect:/admin/categories/";
