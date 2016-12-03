@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import softuniBlog.bindingModel.CategoryBindingModel;
+import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.CategoryRepository;
@@ -83,6 +84,34 @@ public class CategoryController {
         Category category = this.categoryRepository.findOne(id);
         category.setName(categoryBindingModel.getName());
         this.categoryRepository.saveAndFlush(category);
+
+        return "redirect:/admin/categories/";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(Model model, @PathVariable Integer id){
+        if(!this.categoryRepository.exists(id)){
+            return "redirect:/admin/categories";
+        }
+        model.addAttribute("view", "admin/category/delete");
+
+        Category category = this.categoryRepository.findOne(id);
+        model.addAttribute("category",category);
+
+        return "base-layout";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteProcess(@PathVariable Integer id, CategoryBindingModel categoryBindingModel){
+        if(!this.categoryRepository.exists(id)){
+            return "redirect:/admin/categories";
+        }
+
+        Category category = this.categoryRepository.findOne(id);
+        for(Article article : category.getArticles()){
+            this.articleRepository.delete(article);
+        }
+        this.categoryRepository.delete(category);
 
         return "redirect:/admin/categories/";
     }
