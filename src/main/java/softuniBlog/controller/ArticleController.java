@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
+import softuniBlog.entity.Tag;
 import softuniBlog.entity.User;
 import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.CategoryRepository;
+import softuniBlog.repository.TagRepository;
 import softuniBlog.repository.UserRepository;
 
+import java.util.HashSet;
 import java.util.List;
+
+import static org.springframework.security.config.http.MatcherType.regex;
+
 
 @Controller
 public class ArticleController {
@@ -28,6 +34,8 @@ public class ArticleController {
     private UserRepository userRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     @GetMapping("/article/create")
     @PreAuthorize("isAuthenticated()")
@@ -48,12 +56,14 @@ public class ArticleController {
                 .getPrincipal();
         User userEntity = this.userRepository.findByEmail(user.getUsername());
         Category category = this.categoryRepository.findOne(articleBindingModel.getCategoryId());
+        HashSet<Tag> tags = this.findTagsFromString(articleBindingModel.getTagString());
 
         Article articleEntity = new Article(
                 articleBindingModel.getTitle(),
                 articleBindingModel.getContent(),
                 userEntity,
-                category
+                category,
+                tags
         );
 
         this.articleRepository.saveAndFlush(articleEntity);
@@ -161,5 +171,24 @@ public class ArticleController {
         User userEntity = this.userRepository.findByEmail(user.getUsername());
 
         return userEntity.isAdmin() || userEntity.isAuthor(article);
+    }
+
+    private HashSet<Tag> findTagsFromString(String tagString){
+        HashSet<Tag> tags = new HashSet<Tag>();
+
+        String[] tagNames = tagString.split(",\\s*");
+
+        for (String tagName: tagNames){
+            Tag currentTag = this.tagRepository.findByName(tagName);
+
+            if(currentTag == null){
+                currentTag = new Tag(tagName);
+                this.tagRepository.saveAndFlush(currentTag);
+            }
+
+            tags.add(currentTag);
+        }
+
+        return tags;
     }
 }

@@ -11,6 +11,8 @@ public class ArticleBindingModel {
 
     private Integer categoryId;
 
+    private String tagString;
+
     public Integer getCategoryId() {
         return categoryId;
     }
@@ -33,5 +35,13 @@ public class ArticleBindingModel {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getTagString() {
+        return tagString;
+    }
+
+    public void setTagString(String tagString) {
+        this.tagString = tagString;
     }
 }
